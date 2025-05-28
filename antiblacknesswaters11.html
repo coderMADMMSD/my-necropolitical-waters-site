@@ -8,17 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/path-to-your-favicon.png">
-    <!-- Visualization & Content Choices:
-        - Timeline: JS-populated with external source quotes. Timeline markers animated on scroll.
-        - Visual Testimony: HTML structure for images with provided URLs and onerror fallbacks.
-        - Ontology/Black Death: External and paper quotes.
-        - Concepts: JS-populated cards with definitions and paper applications, click to expand. Buttons ARIA labeled.
-        - Deeper Analysis: Condensed text from user's paper, styled for readability and impact.
-        - Chart: Conceptual lead level bar chart.
-        - Quotes from Paper: Integrated using .quote-box-paper style for emphasis.
-        - Back to Top button: Added for UX. ARIA labeled.
-        - Favicon added. JS wrapped in DOMContentLoaded.
-        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -68,18 +57,32 @@
         .gallery-caption-container { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .gallery-caption { font-size: 0.95rem; color: #ececec; line-height: 1.4;}
         .gallery-credit { color: #bfa74a; font-size: 0.85rem; margin-top: 0.5rem; display: block;}
+        .gallery-credit a { text-decoration: underline; }
+        .gallery-credit a:hover { color: #fff6e1; }
+
+        .gallery-item .iframe-container { 
+            width: 100%;
+            height: 200px; 
+            overflow: hidden;
+            border-bottom: 1px solid #383838; 
+        }
+        .gallery-item .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
         
         .analysis-section { background: #1c1c1c; border-radius: 1rem; padding: 2rem; margin-top: 3rem; box-shadow: 0 6px 24px rgba(0,0,0,0.3);}
         .analysis-section h3 { color: #bfa74a; font-size: 1.5rem; margin-bottom: 0.75rem; font-weight: 700;}
         .analysis-section p { line-height: 1.7; margin-bottom: 1rem; color: #d1d5db;}
 
         @media (max-width: 640px) {
-            .gallery-item img { height: 160px;}
+            .gallery-item img, .gallery-item .iframe-container { height: 160px;}
             .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(200px,1fr));}
             .quote-box,
             .quote-box-paper,
             .concept-card {
-                padding: 1rem !important; /* Ensure this overrides other padding if necessary */
+                padding: 1rem !important;
                 font-size: 0.95rem;
              }
             .quote-box-paper footer, .ontology-author { font-size: 0.85rem;}
@@ -108,13 +111,14 @@
                 <div class="hidden md:block">
                     <div class="ml-10 flex space-x-6">
                         <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Introduction</a>
+                        <a href="#glossary" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Glossary</a>
                         <a href="#visual" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Visual Testimony</a>
                         <a href="#crisis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Timeline</a>
                         <a href="#ontology" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Black Death</a>
                         <a href="#roots" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Concepts</a>
                         <a href="#analysis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Deeper Analysis</a>
-                        <a href="#glossary" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Glossary</a>
                         <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">About</a>
+                        <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Contact</a>
                     </div>
                 </div>
                 <div class="md:hidden">
@@ -131,13 +135,14 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-[#1f1f1f] py-2">
             <a href="#intro" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Introduction</a>
+            <a href="#glossary" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Glossary</a>
             <a href="#visual" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Visual Testimony</a>
             <a href="#crisis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Timeline</a>
             <a href="#ontology" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Black Death</a>
             <a href="#roots" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Concepts</a>
             <a href="#analysis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Deeper Analysis</a>
-            <a href="#glossary" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Glossary</a>
             <a href="#about" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">About</a>
+            <a href="#contact" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Contact</a>
         </div>
     </header>
 
@@ -165,6 +170,13 @@
             </div>
         </section>
 
+        <section id="glossary" class="py-10 bg-[#232323] rounded-lg shadow-lg scroll-mt-16">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-2xl font-bold text-[#bfa74a] mb-6 text-center">Glossary of Key Terms</h2>
+                <div id="glossary-container" class="space-y-4"></div>
+            </div>
+        </section>
+
         <section id="visual" class="py-10 scroll-mt-16">
             <div class="max-w-5xl mx-auto text-center px-4">
                 <h2 class="text-2xl font-bold text-[#bfa74a] mb-4">Visual Testimony</h2>
@@ -172,31 +184,24 @@
                     Images from Milwaukee’s schools and neighborhoods—testimony to histories of investment, abandonment, and resistance.
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item">
-                        <img src="https://emke.uwm.edu/wp-content/uploads/2018/08/19760621_MR_EMKE_7610_6A.jpg" alt="Black Milwaukee children at school, 1976" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                    <div class="gallery-item"> 
+                        <img src="https://city.milwaukee.gov/ImageLibrary/MKE-Health1/HEH-Website-2024/images/Untitled-design-37.png?HomeBanner" alt="Lead poisoning prevention graphic" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
                         <div class="gallery-caption-container">
-                            <p class="gallery-caption">Milwaukee, 1976: Black children in the shadow of segregated schooling.</p>
-                            <span class="gallery-credit">Source: UWM Archives</span>
+                           <p class="gallery-caption">Protecting children from lead exposure is essential for their long-term health.</p>
+                           <span class="gallery-credit">Source: <a href="https://city.milwaukee.gov/Health/Services-and-Programs/HomeEnvironmentalHealth/Lead-Poisoning-Facts" target="_blank" rel="noopener noreferrer">City of Milwaukee Health Dept.</a></span>
                         </div>
                     </div>
-                    <div class="gallery-item">
-                        <img src="https://mps.milwaukee.k12.wi.us/MPS-Public/CSA/Student-Services/Enrollment/websitepics2.JPG?Medium" alt="Current Milwaukee Public School building" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                    <div class="gallery-item"> 
+                        <img src="https://i0.wp.com/wisconsinwatch.org/wp-content/uploads/2025/05/Kennedy.jpg?w=2500&quality=100&ssl=1" alt="RFK Jr. speaking" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
                         <div class="gallery-caption-container">
-                           <p class="gallery-caption">MPS Enrollment: Images of hope, risk, and the everyday struggle for safe education.</p>
-                           <span class="gallery-credit">Source: MPS</span>
+                            <p class="gallery-caption">RFK Jr. claims federal ‘team’ is in Milwaukee for school lead crisis; city says there isn’t.</p>
+                            <span class="gallery-credit">Source: <a href="https://wisconsinwatch.org/2025/05/milwaukee-kennedy-lead-poisoning-school-health-wisconsin/" target="_blank" rel="noopener noreferrer">Wisconsin Watch</a></span>
                         </div>
                     </div>
-                    <div class="gallery-item">
-                        <img src="https://i0.wp.com/wisconsinwatch.org/wp-content/uploads/2022/02/north_division_hs.jpg?w=1536&quality=100&ssl=1" alt="North Division High School building" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                    <div class="gallery-item"> 
+                        <img src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/05/12/PMJS/83585853007-mps-spreadsheet-107-schools-512.jpg?width=660&height=413&fit=crop&format=pjpg&auto=webp" alt="MPS spreadsheet showing school assessments" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
                         <div class="gallery-caption-container">
-                            <p class="gallery-caption">North Division HS: A site of struggle, memory, and unresolved environmental hazard.</p>
-                            <span class="gallery-credit">Source: Wisconsin Watch</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://www.jsonline.com/gcdn/presto/2019/12/24/PMJS/1cbb2bbf-11de-421f-9876-bff4b306242e-MJS_CRITTER_05_nws_wood_CRITTER.jpg?width=1320&height=880&fit=crop&format=pjpg&auto=webp" alt="MPS Classroom showing signs of disrepair" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
-                            <p class="gallery-caption">Inside an MPS classroom: Neglect, intrusion, and the challenge of safe learning.</p>
+                            <p class="gallery-caption">MPS says it has visually assessed 48 schools for paint hazards.</p>
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
                         </div>
                     </div>
@@ -221,7 +226,6 @@
                             <span class="gallery-credit">Source: New York Times</span>
                         </div>
                     </div>
-                    <!-- New gallery items START -->
                     <div class="gallery-item">
                         <img src="https://images.foxtv.com/static.fox6now.com/www.fox6now.com/content/uploads/2025/04/932/524/9p-mps-lead-meeting-pkg_00.00.59.42.jpg?ve=1&tl=1" alt="MPS Lead Meeting 2025" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
                         <div class="gallery-caption-container">
@@ -234,13 +238,6 @@
                         <div class="gallery-caption-container">
                             <p class="gallery-caption">Parents rallying for safe school water.</p>
                             <span class="gallery-credit">Source: Facebook</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://kubrick.htvapps.com/htv-prod-media.s3.amazonaws.com/images/lead-danger-positive-schools-0045-67ddb321901ed.jpg?crop=1.00xw:1.00xh;0,0&resize=1200:" alt="Lead Danger Sign at School" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
-                            <p class="gallery-caption">Warning signs about lead danger at schools.</p>
-                            <span class="gallery-credit">Source: HTVA News</span>
                         </div>
                     </div>
                     <div class="gallery-item">
@@ -264,17 +261,48 @@
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
                         </div>
                     </div>
-                    <!-- New gallery items END -->
+                    <div class="gallery-item"> 
+                        <img src="https://harvardpublichealth.org/wp-content/uploads/2022/09/HarvardPublicHealth_Milwuakee_Neighborhood_06.jpg" alt="Metcalfe Park neighborhood in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <div class="gallery-caption-container">
+                            <p class="gallery-caption">Metcalfe Park: Inside structural racism’s invisible net- Living in this northwestern Milwaukee neighborhood is bad for your health. It’s nobody’s fault—and everyone’s.</p>
+                            <span class="gallery-credit">Source: <a href="https://harvardpublichealth.org/environmental-health/metcalfe-park-inside-structural-racism-invisible-net/" target="_blank" rel="noopener noreferrer">Harvard Public Health</a></span>
+                        </div>
+                    </div>
+                    <div class="gallery-item"> 
+                        <img src="https://emke.uwm.edu/wp-content/uploads/2018/07/9999000745-l.jpg" alt="Map showing racial segregation in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <div class="gallery-caption-container">
+                            <p class="gallery-caption">The Milwaukee metropolitan area is often classified as the most racially segregated metropolitan area in the United States. This segregated residence pattern resulted in racially segregated schools in the Milwaukee area.</p>
+                            <span class="gallery-credit">Source: <a href="https://emke.uwm.edu/entry/educational-segregation-and-desegregation/" target="_blank" rel="noopener noreferrer">UWM Encyclopedia of Milwaukee</a></span>
+                        </div>
+                    </div>
+                     <div class="gallery-item"> 
+                        <img src="https://npr.brightspotcdn.com/dims4/default/4bd4000/2147483647/strip/true/crop/3264x2258+0+0/resize/1760x1218!/format/webp/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ff9%2F7f%2F54e30fa244e2a0ca9523a298adc7%2Flead-paint-mps.jpg" alt="Chipped lead paint in MPS school" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <div class="gallery-caption-container">
+                            <p class="gallery-caption">Photos taken inside LaFollette School and Albert E. Kagel School show chipped lead paint on classroom walls, ceilings and furniture. The schools are among seven that have been cleaned overnight or closed for lead remediation since the start of 2025.</p>
+                            <span class="gallery-credit">Source: <a href="https://www.wuwm.com/education/2025-04-29/mps-says-it-will-clean-up-lead-paint-in-100-schools-by-the-end-of-the-year-how" target="_blank" rel="noopener noreferrer">WUWM / MKE Health Dept. Reports</a></span>
+                        </div>
+                    </div>
+                    <div class="gallery-item"> 
+                        <div class="iframe-container">
+                            <iframe scrolling="no" frameborder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen allow="autoplay; fullscreen" src="https://w3.mp.lura.live/player/3.12.16/v3/anvload.html?key=eyJtIjoiRVBGT1giLCJ2IjoiMTYzNTYyNSIsInRyYWNrVGltZVBlcmlvZCI6MSwid2lkdGgiOiIxMDAlIiwiYW52YWNrIjoiN2I0V0psMzV6YUhSd1d6aGtVZXdXWkppRDNKT21BakciLCJzaGFyZUxpbmsiOiJodHRwczovL3d3dy5mb3g2bm93LmNvbS9uZXdzL21wcy1sZWFkLWV4cG9zdXJlLXdlc3RzaWRlLWFjYWRlbXktc3R1ZGVudHMtdGVhY2hlcnMtcmVsb2NhdGVkIiwicGx1Z2lucyI6eyJjdXN0b21Db21zY29yZVBsdWdpbiI6eyJwdWJsaXNoZXJTZWNyZXQiOiJ1V25pZ3l4T05ZTEtRYWxrNGlPS29hTHEzcTVoYndoUCIsImMzIjoiRk9YIDYgTmV3cyIsImM2IjoiRlRTIiwiYzQiOm51bGwsInNldEdlbnJlTmFtZSI6Ik5ld3MiLCJhcHBOYW1lIjoiRk9YNiBNaWx3YXVrZWUgTmV3cyBBcHAiLCJzY3JpcHQiOiJodHRwczovL3N0YXRpYy5mb3h0di5jb20vc3RhdGljL29yaW9uL3NjcmlwdHMvY29yZS91dGlscy9jb21zY29yZS9OYXRpdmVDb21zY29yZVBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2NvbXNjb3JlL2NvbXNjb3JlLmpzIiwiY2xpZW50SWQiOiI2MDQyOTAxIiwibnNfc3Rfc3QiOiJXSVRJIiwidGl0bGUiOiJNUFMgbGVhZCBleHBvc3VyZTogV2VzdHNpZGUgQWNhZGVteSBzdHVkZW50cywgdGVhY2hlcnMgcmVsb2NhdGVkIiwibnNfc3RfY2kiOiIxNjM1NjI1In0sImRmcCI6eyJjbGllbnRTaWRlIjp7ImFkVGFnVXJsIjoiaHR0cHM6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Fkcz9pdT0vNjM3OTA1NjQvd2l0aV9mb3g2JmRlc2NyaXB0aW9uX3VybD1bcGxhY2Vob2xkZXJdJmVudj12cCZpbXBsPXMmY29ycmVsYXRvcj0mdGZjZD0wJm5wYT0wJmdkZnBfcmVxPTEmb3V0cHV0PXZhc3Qmc3o9MTAwMXgxMDAxJnVudmlld2VkX3Bvc2l0aW9uX3N0YXJ0PTEmY21zaWQ9MjU0MTA0MCZ2aWQ9MTYzNTYyNSIsImtleVZhbHVlcyI6eyJzdHlwZSI6WyJuZXdzIl0sInB0eXBlIjoidmlkZW8tY2xpcCIsImMiOlsibmV3cyJdLCJkIjoid2ViIiwidXNfcHJpdmFjeSI6bnVsbH19fSwibmF0aXZlSGVhcnRiZWF0UGx1Z2luIjp7InNjcmlwdCI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2Fkb2JlL0N1c3RvbUhlYXJ0YmVhdFBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vYXNzZXRzLmFkb2JlZHRtLmNvbS8wZjZiZjkwNGI2MDkvNmRkYWI1YzE3NGU3L2xhdW5jaC1lODA3MWEwNzE5YzEubWluLmpzIiwiYWRkaXRpb25hbFBhZ2VNZXRhIjp7ImZpeFZlcnNpb24iOiI4LjkuMCJ9LCJwbGF5ZXJVbmlxdWVJZCI6InBsYXllci02MzFjNWEwMS05YTkzLTRiMTEtOTQ3YS1kMzVmYTA2Njg3YzIifX0sImh0bWw1Ijp0cnVlLCJmb3JtYXQiOiJtM3U4IiwidG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMmFXUWlPaUl4TmpNMU5qSTFJaXdpYVhOeklqb2lOMkkwVjBwc016VjZZVWhTZDFkNmFHdFZaWGRYV2twcFJETktUMjFCYWtjaUxDSmxlSEFpT2pFM05EZ3dNemd3T1Rjc0ltbGhkQ0k2TVRjME9EQXpORFE1TjMwLksyTVR6OV8xNW5vSmxGeEtMY2VlWWo3NllGU2tqa0U5d1dJaHRfc2laa00ifQ%253D%253D"></iframe>
+                        </div>
+                        <div class="gallery-caption-container">
+                            <p class="gallery-caption">MPS lead exposure; Westside Academy students, teachers relocated</p>
+                            <span class="gallery-credit">Source: FOX6NOW</span>
+                        </div>
+                    </div>
                 </div>
-                <!-- Resources Links START -->
                 <div class="mt-8 text-left max-w-3xl mx-auto">
                     <h3 class="text-xl font-bold text-[#bfa74a] mb-4">Additional Documents & Links</h3>
                     <ul class="list-disc list-inside text-gray-300 text-sm">
                         <li><a href="https://city.milwaukee.gov/ImageLibrary/MKE-Health1/HEH-Website-2024/MPS-Lead-Documents/4.3/Progress-Letter-to-MPS-4.3.2025.pdf" target="_blank" class="underline hover:text-yellow-300">Progress Letter to MPS (April 3, 2025)</a></li>
                         <li><a href="https://mps.milwaukee.k12.wi.us/MPS-Public/CSA/FMS/Resources/MPS-Lead-Report/DHS-non-compliance-order-03-19-2025.pdf" target="_blank" class="underline hover:text-yellow-300">DHS Non-Compliance Order (March 19, 2025)</a></li>
+                        <li><a href="https://city.milwaukee.gov/ImageLibrary/Groups/healthAuthors/MKE-Elevate/Racismandhealthequity.pdf" target="_blank" class="underline hover:text-yellow-300">Milwaukee Report on Racism and Health Equity</a></li>
+                        <li><a href="https://mps.milwaukee.k12.wi.us/MPS-Public/CSA/FMS/Resources/MPS-Lead-Report/MPS-Lead-Action-Plan-Appendices/Lead-Action-Plan-Appendix-D-High-Priority-School-Stabilization-Schedule-04-28-2025.pdf" target="_blank" class="underline hover:text-yellow-300">MPS Lead Action Plan - Appendix D: School Stabilization Schedule (April 2025)</a></li>
+                        <li><a href="https://www.wisn.com/article/milwaukee-health-department-to-test-all-mps-schools-for-lead-hazards/64235033" target="_blank" class="underline hover:text-yellow-300">WISN: Milwaukee Health Dept to Test All MPS Schools (May 2025)</a></li>
+                        <li><a href="https://www.aclu-wi.org/en/news/national-spotlight-shines-milwaukee-its-history-systemic-racism-should-be-front-and-center#:~:text=Levine's%20investigation%20reveals%20that%20Milwaukee's,America's%2050%20largest%20metropolitan%20areas." target="_blank" class="underline hover:text-yellow-300">ACLU-WI: Milwaukee's History of Systemic Racism</a></li>
                     </ul>
                 </div>
-                <!-- Resources Links END -->
                 <div class="quote-box-paper mt-12 mx-auto max-w-3xl">
                     <p>“The crisis ripped through Black communities, generating waves of fear, anger, and profound mistrust. School closures were not minor disruptions; they destabilized already precarious livelihoods and educational trajectories. Children were not simply ‘relocated’—they were uprooted, their social and academic rhythms fractured.”</p>
                     <footer>— Ebony Rose, "Necropolitical Waters"</footer>
@@ -288,6 +316,10 @@
                  <div class="quote-box-paper my-6 mx-auto max-w-2xl">
                     <p>“The ‘poisoned schoolhouse’ is not an isolated aberration; it is a recurring node in the architecture of anti-Black governance. The violence is slow, measured in micrograms and lost IQ points... This is death by design—by paperwork, by delay, and by the persistent state logic that Black children’s lives are negotiable.”</p>
                     <footer>— Ebony Rose, "Necropolitical Waters"</footer>
+                </div>
+                <div class="quote-box-paper my-6 mx-auto max-w-2xl">
+                    <p>“Milwaukee Public Schools and the City of Milwaukee Health Department have partnered to launch a lead action plan. This plan prioritizes transparency, student health, and systems improvement. The expectation by all parties is that the MPS Lead Action Plan has living documents.”</p>
+                    <footer class="text-right mt-2 font-style-normal"><a href="https://mps.milwaukee.k12.wi.us/en/District/About-MPS/Departments/Office-of-Operations/Facilities--Maintenance-Services/MPS-Lead-Report/Lead-Action-Plan.htm" target="_blank" class="underline text-[#bfa74a] hover:text-yellow-300">View the MPS Lead Action Plan</a></footer>
                 </div>
                 <div class="relative">
                     <div id="timeline-container"></div>
@@ -390,12 +422,14 @@
             </a>
         </section>
 
-        <section id="glossary" class="py-10 bg-[#232323] rounded-lg shadow-lg scroll-mt-16">
-            <div class="max-w-3xl mx-auto px-4">
-                <h2 class="text-2xl font-bold text-[#bfa74a] mb-6 text-center">Glossary of Key Terms</h2>
-                <div id="glossary-container" class="space-y-4"></div>
-            </div>
+        <section id="contact" class="py-12 text-center text-sm text-gray-400 max-w-2xl mx-auto scroll-mt-16"> <!-- NEW CONTACT SECTION -->
+            <h3 class="text-[#bfa74a] font-semibold text-lg mb-3">Contact the Author</h3>
+            <p class="leading-relaxed">
+              For questions, feedback, or inquiries regarding this research, please contact Ebony Rose at:
+              <a href="mailto:necropoliticalwaters@gmail.com" class="underline text-[#bfa74a] hover:text-yellow-300">necropoliticalwaters@gmail.com</a>
+            </p>
         </section>
+
     </main>
 
     <footer class="bg-[#111111] text-stone-300 py-8 text-center">
@@ -485,7 +519,7 @@
                         break;
                     }
                 }
-                if (!found) initialSection = sections[0].id;
+                if (!found) initialSection = sections[0].id; 
             }
 
             if (initialSection) {
@@ -688,7 +722,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animate-pulse-on-visible');
-                    markerObserver.unobserve(entry.target); // Animate only once
+                    markerObserver.unobserve(entry.target); 
                 }
             });
         }, { threshold: 0.5 });
