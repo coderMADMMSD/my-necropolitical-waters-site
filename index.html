@@ -4,68 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Necropolitical Waters: The Milwaukee Schools Lead Crisis</title>
+    <meta name="description" content="Interactive report on Milwaukee’s lead crisis exploring anti-Black necropolitics, chronology, and calls for justice.">
+    <!-- Open Graph Tags for Social Media Sharing -->
+    <meta property="og:title" content="Necropolitical Waters: The Milwaukee Schools Lead Crisis">
+    <meta property="og:description" content="An interactive exploration of the 2024-2025 Milwaukee Public Schools lead crisis, its systemic roots, and its impact on the community.">
+    <meta property="og:image" content="https://your-domain.com/path-to-your-social-share-image.jpg"> <!-- ** REPLACE THIS URL ** -->
+    <meta property="og:url" content="https://your-github-username.github.io/your-repo-name/"> <!-- ** REPLACE THIS URL ** -->
+    <meta property="og:type" content="website">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/path-to-your-favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png"> <!-- Assuming favicon.png is in the root -->
     <style>
+        :root {
+            --color-primary-gold: #bfa74a;
+            --color-primary-red: #a11919;
+            --color-background-dark: #18181b;
+            --color-background-medium: #232323;
+            --color-background-light: #2a2a2a;
+            --color-text-main: #ececec;
+            --color-text-subtle: #c7c7c7;
+            --color-border-dark: #383838;
+            --color-border-medium: #444;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #18181b;
-            color: #ececec;
+            background: var(--color-background-dark);
+            color: var(--color-text-main);
             scroll-behavior: smooth;
         }
-        .active-nav { color: #bfa74a; border-bottom: 2px solid #bfa74a; }
+        .active-nav { color: var(--color-primary-gold); border-bottom: 2px solid var(--color-primary-gold); }
+        
         .timeline-item {
-            position: relative; padding-left: 2.5rem; margin-bottom: 2rem;
+            position: relative; padding-left: 2.5rem; margin-bottom: 1rem; 
+            background: var(--color-background-medium); 
+            padding: 1rem 1rem 1rem 2.5rem; 
+            border-radius: 0.5rem;
+            cursor: pointer; 
+            transition: background-color 0.3s;
+        }
+        .timeline-item:hover, .timeline-item:focus-visible {
+            background-color: var(--color-background-light);
+            outline: 2px solid var(--color-primary-gold);
+            outline-offset: 2px;
         }
         .timeline-marker {
-            position: absolute; left: 0; top: 0.25rem; width: 1rem; height: 1rem;
-            border-radius: 50%; background-color: #a11919; border: 2px solid #bfa74a;
+            position: absolute; left: 0.5rem; top: 1.25rem; width: 1rem; height: 1rem; 
+            border-radius: 50%; background-color: var(--color-primary-red); border: 2px solid var(--color-primary-gold);
         }
         .timeline-line {
-            position: absolute; left: 0.4375rem; top: 1.5rem; bottom: -2rem; width: 2px; background-color: #444;
+            position: absolute; left: 0.9375rem; top: 2rem; bottom: -1rem; width: 2px; background-color: var(--color-border-medium); 
         }
         .timeline-item:last-child .timeline-line { display: none; }
-        .concept-card { background: #232323; border-radius: 1.1rem; border: 1px solid #383838; cursor: pointer; }
+        .timeline-item-details { 
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, margin-top 0.5s ease-out;
+            margin-top: 0;
+            padding-left: 0.5rem; 
+            font-size: 0.9em;
+            color: var(--color-text-subtle);
+            border-top: 1px solid var(--color-border-dark); 
+        }
+        .timeline-item.open .timeline-item-details {
+            max-height: 400px; 
+            opacity: 1;
+            margin-top: 0.75rem; 
+            padding-top: 0.75rem;
+        }
+
+        .concept-card { background: var(--color-background-medium); border-radius: 1.1rem; border: 1px solid var(--color-border-dark); cursor: pointer; }
+        .concept-card:hover, .concept-card:focus-within {
+             border-color: var(--color-primary-gold);
+        }
         .concept-card .details { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.3s ease-out; }
         .concept-card.open .details { max-height: 500px; opacity: 1;}
-        .concept-card button { color: #bfa74a; font-weight: 600; background: none; border: none; padding: 0; cursor: pointer; text-align: left; }
+        .concept-card button { color: var(--color-primary-gold); font-weight: 600; background: none; border: none; padding: 0; cursor: pointer; text-align: left; }
+        .concept-card button:hover, .concept-card button:focus-visible {
+            text-decoration: underline;
+            outline: none;
+        }
 
-        .chart-container { background: #232323; border-radius: 0.75rem; padding: 1rem; width: 100%; max-width: 600px; margin-left:auto; margin-right:auto;}
-        .quote-box { background: #232323; border-left: 4px solid #a11919; padding: 1.3rem; margin-bottom: 1.5rem; border-radius: 0.5rem; color: #d2d2d2; font-size: 1.13rem;}
-        .quote-box-paper { background: #2a2a2a; border-left: 4px solid #bfa74a; padding: 1.3rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-radius: 0.5rem; color: #e0e0e0; font-size: 1.1rem; font-style: italic;}
-        .quote-box-paper footer { text-align: right; font-size: 0.9rem; color: #bfa74a; margin-top: 0.5rem; font-style: normal;}
-        .ontology-section { background: #101010; border-top: 2px solid #a11919; border-bottom: 2px solid #bfa74a; padding: 3rem 0; margin: 4rem 0;}
+
+        .chart-container { background: var(--color-background-medium); border-radius: 0.75rem; padding: 1rem; width: 100%; max-width: 600px; margin-left:auto; margin-right:auto;}
+        .quote-box { background: var(--color-background-medium); border-left: 4px solid var(--color-primary-red); padding: 1.3rem; margin-bottom: 1.5rem; border-radius: 0.5rem; color: #d2d2d2; font-size: 1.13rem;}
+        .quote-box-paper { background: var(--color-background-light); border-left: 4px solid var(--color-primary-gold); padding: 1.3rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-radius: 0.5rem; color: var(--color-text-main); font-size: 1.1rem; font-style: italic;}
+        .quote-box-paper footer { text-align: right; font-size: 0.9rem; color: var(--color-primary-gold); margin-top: 0.5rem; font-style: normal;}
+        
+        .ontology-section { background: #101010; border-top: 2px solid var(--color-primary-red); border-bottom: 2px solid var(--color-primary-gold); padding: 3rem 0; margin: 4rem 0;}
         .ontology-quote { font-size: 1.18rem; color: #fff6e1; font-weight: 600; margin: 2.3rem auto 1rem auto; text-align: center; max-width: 80%;}
-        .ontology-author { color: #bfa74a; text-align: center; font-size: 1.03rem;}
+        .ontology-author { color: var(--color-primary-gold); text-align: center; font-size: 1.03rem;}
         
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 1.5rem; margin-top: 2.2rem;}
-        .gallery-item { background: #232323; border-radius: 0.8rem; overflow: hidden; box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25); display: flex; flex-direction: column;}
-        .gallery-item img { 
+        .gallery-item { background: var(--color-background-medium); border-radius: 0.8rem; overflow: hidden; box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25); display: flex; flex-direction: column;}
+        .gallery-item img, .gallery-item .iframe-container { 
             width: 100%; 
             height: 200px; 
             object-fit: cover; 
             display: block; 
             transition: transform 0.3s, filter 0.3s;
-            border-bottom: 1px solid #383838;
+            border-bottom: 1px solid var(--color-border-dark);
         }
         .gallery-item:hover img {
             transform: scale(1.05);
             filter: brightness(1.1);
         }
         .gallery-caption-container { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .gallery-caption { font-size: 0.95rem; color: #ececec; line-height: 1.4;}
-        .gallery-credit { color: #bfa74a; font-size: 0.85rem; margin-top: 0.5rem; display: block;}
+        .gallery-caption { font-size: 0.95rem; color: var(--color-text-main); line-height: 1.4;}
+        .gallery-credit { color: var(--color-primary-gold); font-size: 0.85rem; margin-top: 0.5rem; display: block;}
         .gallery-credit a { text-decoration: underline; }
         .gallery-credit a:hover { color: #fff6e1; }
 
-        .gallery-item .iframe-container { 
-            width: 100%;
-            height: 200px; 
-            overflow: hidden;
-            border-bottom: 1px solid #383838; 
-        }
         .gallery-item .iframe-container iframe {
             width: 100%;
             height: 100%;
@@ -73,8 +125,26 @@
         }
         
         .analysis-section { background: #1c1c1c; border-radius: 1rem; padding: 2rem; margin-top: 3rem; box-shadow: 0 6px 24px rgba(0,0,0,0.3);}
-        .analysis-section h3 { color: #bfa74a; font-size: 1.5rem; margin-bottom: 0.75rem; font-weight: 700;}
+        .analysis-section h3 { color: var(--color-primary-gold); font-size: 1.5rem; margin-bottom: 0.75rem; font-weight: 700;}
         .analysis-section p { line-height: 1.7; margin-bottom: 1rem; color: #d1d5db;}
+
+        .chart-explainer { 
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, margin-top 0.5s ease-out;
+            background-color: #1e1e1e;
+            padding: 0 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0;
+            border: 1px solid var(--color-border-dark);
+        }
+        .chart-explainer.open {
+            max-height: 400px; 
+            opacity: 1;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
 
         @media (max-width: 640px) {
             .gallery-item img, .gallery-item .iframe-container { height: 160px;}
@@ -89,6 +159,7 @@
             .ontology-quote { font-size: 1.05rem; }
             .analysis-section h3 { font-size: 1.25rem; }
             .analysis-section p { font-size: 0.95rem; }
+            .timeline-item-details { font-size: 0.85em; }
         }
 
         @keyframes pulse {
@@ -105,24 +176,26 @@
         <nav class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-[#bfa74a]">Necropolitical Waters</h1>
-                    <p class="text-xs text-[#ececec]/80">by <span class="font-semibold">Ebony Rose</span>, UW-Madison ELPA Masters Student, 2025</p>
+                    <h1 class="text-xl font-bold tracking-tight text-[var(--color-primary-gold)]">Necropolitical Waters</h1>
+                    <p class="text-xs text-[var(--color-text-main)]/80">by <span class="font-semibold">Ebony Rose</span>, UW-Madison ELPA Masters Student, 2025</p>
                 </div>
                 <div class="hidden md:block">
-                    <div class="ml-10 flex space-x-6">
-                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Introduction</a>
-                        <a href="#glossary" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Glossary</a>
-                        <a href="#visual" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Visual Testimony</a>
-                        <a href="#crisis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Timeline</a>
-                        <a href="#ontology" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Black Death</a>
-                        <a href="#roots" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Concepts</a>
-                        <a href="#analysis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Deeper Analysis</a>
-                        <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">About</a>
-                        <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[#bfa74a]">Contact</a>
-                    </div>
+                    <nav aria-label="Primary Navigation" class="ml-10 flex space-x-6">
+                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Introduction</a>
+                        <a href="#glossary" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Glossary</a>
+                        <a href="#visual" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Visual Testimony</a>
+                        <a href="#crisis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Timeline</a>
+                        <a href="#ontology" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Black Death</a>
+                        <a href="#roots" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Concepts</a>
+                        <a href="#analysis" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Deeper Analysis</a>
+                        <!-- <a href="#accountability" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Accountability</a> Removed -->
+                        <a href="#news" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">News</a>
+                        <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">About</a>
+                        <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-semibold text-gray-200 hover:text-[var(--color-primary-gold)]">Contact</a>
+                    </nav>
                 </div>
                 <div class="md:hidden">
-                    <button id="mobile-menu-button" aria-label="Toggle mobile navigation menu" class="p-2 text-gray-400 hover:text-[#bfa74a] focus:outline-none">
+                    <button id="mobile-menu-button" aria-label="Toggle mobile navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="p-2 text-gray-400 hover:text-[var(--color-primary-gold)] focus:outline-none">
                         <svg id="menu-icon-open" class="h-6 w-6 block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
                         </svg>
@@ -133,29 +206,31 @@
                 </div>
             </div>
         </nav>
-        <div id="mobile-menu" class="md:hidden hidden bg-[#1f1f1f] py-2">
-            <a href="#intro" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Introduction</a>
-            <a href="#glossary" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Glossary</a>
-            <a href="#visual" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Visual Testimony</a>
-            <a href="#crisis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Timeline</a>
-            <a href="#ontology" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Black Death</a>
-            <a href="#roots" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Concepts</a>
-            <a href="#analysis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Deeper Analysis</a>
-            <a href="#about" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">About</a>
-            <a href="#contact" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[#bfa74a]">Contact</a>
-        </div>
+        <nav id="mobile-menu" aria-label="Mobile Navigation" class="md:hidden hidden bg-[#1f1f1f] py-2">
+            <a href="#intro" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Introduction</a>
+            <a href="#glossary" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Glossary</a>
+            <a href="#visual" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Visual Testimony</a>
+            <a href="#crisis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Timeline</a>
+            <a href="#ontology" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Black Death</a>
+            <a href="#roots" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Concepts</a>
+            <a href="#analysis" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Deeper Analysis</a>
+            <!-- <a href="#accountability" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Accountability</a> Removed -->
+            <a href="#news" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">News</a>
+            <a href="#about" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">About</a>
+            <a href="#contact" class="block mobile-nav-link px-4 py-2 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-[var(--color-primary-gold)]">Contact</a>
+        </nav>
     </header>
 
     <main class="container mx-auto px-4 py-10">
 
         <section id="intro" class="py-8 scroll-mt-16">
             <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-black text-[#bfa74a] mb-4">The Poisoned Schoolhouse</h2>
+                <h2 class="text-3xl font-black text-[var(--color-primary-gold)] mb-4">The Poisoned Schoolhouse</h2>
                 <div class="quote-box">
                     <strong>
                      “The health department said the three schools — Starms Early Childhood, Fernwood Montessori and LaFollette — ‘pose an immediate and ongoing risk’ due to dangerous lead hazards.”
                     </strong><br>
-                    <span class="text-sm text-[#bfa74a]">— WPR, May 2025</span>
+                    <span class="text-sm text-[var(--color-primary-gold)]">— WPR, May 2025</span>
                 </div>
                 <div class="quote-box-paper">
                     <p>“What occurred was the deliberate deferral of Black humanity. Milwaukee did not simply fail its Black children; the state did what it was built to do—manage Black existence, diminish Black life chances, and authorize slow, state-approved death under the deceitful banner of public education.”</p>
@@ -170,130 +245,130 @@
             </div>
         </section>
 
-        <section id="glossary" class="py-10 bg-[#232323] rounded-lg shadow-lg scroll-mt-16">
+        <section id="glossary" class="py-10 bg-[var(--color-background-medium)] rounded-lg shadow-lg scroll-mt-16">
             <div class="max-w-3xl mx-auto px-4">
-                <h2 class="text-2xl font-bold text-[#bfa74a] mb-6 text-center">Glossary of Key Terms</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-primary-gold)] mb-6 text-center">Glossary of Key Terms</h2>
                 <div id="glossary-container" class="space-y-4"></div>
             </div>
         </section>
 
         <section id="visual" class="py-10 scroll-mt-16">
             <div class="max-w-5xl mx-auto text-center px-4">
-                <h2 class="text-2xl font-bold text-[#bfa74a] mb-4">Visual Testimony</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-primary-gold)] mb-4">Visual Testimony</h2>
                 <p class="text-gray-400 mb-7 max-w-xl mx-auto leading-relaxed">
                     Images from Milwaukee’s schools and neighborhoods—testimony to histories of investment, abandonment, and resistance.
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item"> 
-                        <img src="https://city.milwaukee.gov/ImageLibrary/MKE-Health1/HEH-Website-2024/images/Untitled-design-37.png?HomeBanner" alt="Lead poisoning prevention graphic" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                    <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://city.milwaukee.gov/ImageLibrary/MKE-Health1/HEH-Website-2024/images/Untitled-design-37.png?HomeBanner" alt="Lead poisoning prevention graphic" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                            <p class="gallery-caption">Protecting children from lead exposure is essential for their long-term health.</p>
                            <span class="gallery-credit">Source: <a href="https://city.milwaukee.gov/Health/Services-and-Programs/HomeEnvironmentalHealth/Lead-Poisoning-Facts" target="_blank" rel="noopener noreferrer">City of Milwaukee Health Dept.</a></span>
-                        </div>
-                    </div>
-                    <div class="gallery-item"> 
-                        <img src="https://i0.wp.com/wisconsinwatch.org/wp-content/uploads/2025/05/Kennedy.jpg?w=2500&quality=100&ssl=1" alt="RFK Jr. speaking" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://i0.wp.com/wisconsinwatch.org/wp-content/uploads/2025/05/Kennedy.jpg?w=2500&quality=100&ssl=1" alt="RFK Jr. speaking" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">RFK Jr. claims federal ‘team’ is in Milwaukee for school lead crisis; city says there isn’t.</p>
                             <span class="gallery-credit">Source: <a href="https://wisconsinwatch.org/2025/05/milwaukee-kennedy-lead-poisoning-school-health-wisconsin/" target="_blank" rel="noopener noreferrer">Wisconsin Watch</a></span>
-                        </div>
-                    </div>
-                    <div class="gallery-item"> 
-                        <img src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/05/12/PMJS/83585853007-mps-spreadsheet-107-schools-512.jpg?width=660&height=413&fit=crop&format=pjpg&auto=webp" alt="MPS spreadsheet showing school assessments" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/05/12/PMJS/83585853007-mps-spreadsheet-107-schools-512.jpg?width=660&height=413&fit=crop&format=pjpg&auto=webp" alt="MPS spreadsheet showing school assessments" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">MPS says it has visually assessed 48 schools for paint hazards.</p>
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://www.jsonline.com/gcdn/presto/2021/07/12/PMJS/94d2ab5d-95bd-47b8-8001-dfcd50de4b26-thumbnail_IMG_1979.jpg?width=660&height=660&fit=crop&format=pjpg&auto=webp" alt="Aging Milwaukee school infrastructure" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://www.jsonline.com/gcdn/presto/2021/07/12/PMJS/94d2ab5d-95bd-47b8-8001-dfcd50de4b26-thumbnail_IMG_1979.jpg?width=660&height=660&fit=crop&format=pjpg&auto=webp" alt="Aging Milwaukee school infrastructure" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Aging infrastructure: Milwaukee’s buildings as necro-infrastructure, slow violence embodied.</p>
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
-                        </div>
-                    </div>
-                     <div class="gallery-item">
-                        <img src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/05/12/PMJS/83575640007-site-visit-starms-ecc-3122025.jpg?width=660&height=463&fit=crop&format=pjpg&auto=webp" alt="Impact of school closures" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                     <figure class="gallery-item">
+                        <img loading="lazy" src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/05/12/PMJS/83575640007-site-visit-starms-ecc-3122025.jpg?width=660&height=463&fit=crop&format=pjpg&auto=webp" alt="Impact of school closures" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                            <p class="gallery-caption">The impact of school closures on Black families and communities.</p>
                            <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://static01.nyt.com/images/2020/06/04/opinion/04Ross/04Ross-superJumbo.jpg?quality=75&auto=webp" alt="NYT: Black children in protest" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://static01.nyt.com/images/2020/06/04/opinion/04Ross/04Ross-superJumbo.jpg?quality=75&auto=webp" alt="NYT: Black children in protest" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Black youth and protest: The struggle for life in the wake of neglect.</p>
                             <span class="gallery-credit">Source: New York Times</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.foxtv.com/static.fox6now.com/www.fox6now.com/content/uploads/2025/04/932/524/9p-mps-lead-meeting-pkg_00.00.59.42.jpg?ve=1&tl=1" alt="MPS Lead Meeting 2025" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://images.foxtv.com/static.fox6now.com/www.fox6now.com/content/uploads/2025/04/932/524/9p-mps-lead-meeting-pkg_00.00.59.42.jpg?ve=1&tl=1" alt="MPS Lead Meeting 2025" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Community leaders at MPS lead crisis meeting.</p>
                             <span class="gallery-credit">Source: FOX6 Now</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/493276913_1079272650900371_7770948953397241018_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=SHsCgzxvYdAQ7kNvwFhUtWb&_nc_oc=Adm0GxRGuMe8lsvnzCmndvju22GdbynkUeKTGCNRO98oCkx5S0dsooD68CdR7VOIOUQ&_nc_zt=23&_nc_ht=scontent-ord5-2.xx&_nc_gid=gP5JDh0Ne19YS4OISUGk6A&oh=00_AfIZwnnrAX8sqp7vt1fmckgjY_IsLOkNw9RzS3JhR7oEQw&oe=683A709F" alt="Parent Advocacy Rally" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/493276913_1079272650900371_7770948953397241018_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=SHsCgzxvYdAQ7kNvwFhUtWb&_nc_oc=Adm0GxRGuMe8lsvnzCmndvju22GdbynkUeKTGCNRO98oCkx5S0dsooD68CdR7VOIOUQ&_nc_zt=23&_nc_ht=scontent-ord5-2.xx&_nc_gid=gP5JDh0Ne19YS4OISUGk6A&oh=00_AfIZwnnrAX8sqp7vt1fmckgjY_IsLOkNw9RzS3JhR7oEQw&oe=683A709F" alt="Parent Advocacy Rally" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Parents rallying for safe school water.</p>
                             <span class="gallery-credit">Source: Facebook</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://wisconsinexaminer.com/2025/05/08/lead-screening-clinic-held-in-milwaukee-high-school/img_2524/" alt="Lead Screening Clinic" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://wisconsinexaminer.com/2025/05/08/lead-screening-clinic-held-in-milwaukee-high-school/img_2524/" alt="Lead Screening Clinic" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Lead screening clinic at Milwaukee high school.</p>
                             <span class="gallery-credit">Source: Wisconsin Examiner</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://www.jsonline.com/gcdn/authoring/authoring-images/2024/09/03/PMJS/75063859007-image-39.jpg?crop=1022,575,x0,y73&width=660&height=371&format=pjpg&auto=webp" alt="MPS Building Repair" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://www.jsonline.com/gcdn/authoring/authoring-images/2024/09/03/PMJS/75063859007-image-39.jpg?crop=1022,575,x0,y73&width=660&height=371&format=pjpg&auto=webp" alt="MPS Building Repair" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Repair efforts at MPS school building.</p>
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/03/14/PMJS/82404473007-lead-la-follette-00637.jpg" alt="LaFollette School Lead Cleanup" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img loading="lazy" src="https://www.jsonline.com/gcdn/authoring/authoring-images/2025/03/14/PMJS/82404473007-lead-la-follette-00637.jpg" alt="LaFollette School Lead Cleanup" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Lead cleanup at LaFollette school.</p>
                             <span class="gallery-credit">Source: Milwaukee Journal Sentinel</span>
-                        </div>
-                    </div>
-                    <div class="gallery-item"> 
-                        <img src="https://harvardpublichealth.org/wp-content/uploads/2022/09/HarvardPublicHealth_Milwuakee_Neighborhood_06.jpg" alt="Metcalfe Park neighborhood in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://harvardpublichealth.org/wp-content/uploads/2022/09/HarvardPublicHealth_Milwuakee_Neighborhood_06.jpg" alt="Metcalfe Park neighborhood in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Metcalfe Park: Inside structural racism’s invisible net- Living in this northwestern Milwaukee neighborhood is bad for your health. It’s nobody’s fault—and everyone’s.</p>
                             <span class="gallery-credit">Source: <a href="https://harvardpublichealth.org/environmental-health/metcalfe-park-inside-structural-racism-invisible-net/" target="_blank" rel="noopener noreferrer">Harvard Public Health</a></span>
-                        </div>
-                    </div>
-                    <div class="gallery-item"> 
-                        <img src="https://emke.uwm.edu/wp-content/uploads/2018/07/9999000745-l.jpg" alt="Map showing racial segregation in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://emke.uwm.edu/wp-content/uploads/2018/07/9999000745-l.jpg" alt="Map showing racial segregation in Milwaukee" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">The Milwaukee metropolitan area is often classified as the most racially segregated metropolitan area in the United States. This segregated residence pattern resulted in racially segregated schools in the Milwaukee area.</p>
                             <span class="gallery-credit">Source: <a href="https://emke.uwm.edu/entry/educational-segregation-and-desegregation/" target="_blank" rel="noopener noreferrer">UWM Encyclopedia of Milwaukee</a></span>
-                        </div>
-                    </div>
-                     <div class="gallery-item"> 
-                        <img src="https://npr.brightspotcdn.com/dims4/default/4bd4000/2147483647/strip/true/crop/3264x2258+0+0/resize/1760x1218!/format/webp/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ff9%2F7f%2F54e30fa244e2a0ca9523a298adc7%2Flead-paint-mps.jpg" alt="Chipped lead paint in MPS school" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
-                        <div class="gallery-caption-container">
+                        </figcaption>
+                    </figure>
+                     <figure class="gallery-item"> 
+                        <img loading="lazy" src="https://npr.brightspotcdn.com/dims4/default/4bd4000/2147483647/strip/true/crop/3264x2258+0+0/resize/1760x1218!/format/webp/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ff9%2F7f%2F54e30fa244e2a0ca9523a298adc7%2Flead-paint-mps.jpg" alt="Chipped lead paint in MPS school" onerror="this.onerror=null;this.src='https://placehold.co/250x200/232323/bfa74a?text=Image+Not+Available';">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">Photos taken inside LaFollette School and Albert E. Kagel School show chipped lead paint on classroom walls, ceilings and furniture. The schools are among seven that have been cleaned overnight or closed for lead remediation since the start of 2025.</p>
                             <span class="gallery-credit">Source: <a href="https://www.wuwm.com/education/2025-04-29/mps-says-it-will-clean-up-lead-paint-in-100-schools-by-the-end-of-the-year-how" target="_blank" rel="noopener noreferrer">WUWM / MKE Health Dept. Reports</a></span>
-                        </div>
-                    </div>
-                    <div class="gallery-item"> 
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item"> 
                         <div class="iframe-container">
-                            <iframe scrolling="no" frameborder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen allow="autoplay; fullscreen" src="https://w3.mp.lura.live/player/3.12.16/v3/anvload.html?key=eyJtIjoiRVBGT1giLCJ2IjoiMTYzNTYyNSIsInRyYWNrVGltZVBlcmlvZCI6MSwid2lkdGgiOiIxMDAlIiwiYW52YWNrIjoiN2I0V0psMzV6YUhSd1d6aGtVZXdXWkppRDNKT21BakciLCJzaGFyZUxpbmsiOiJodHRwczovL3d3dy5mb3g2bm93LmNvbS9uZXdzL21wcy1sZWFkLWV4cG9zdXJlLXdlc3RzaWRlLWFjYWRlbXktc3R1ZGVudHMtdGVhY2hlcnMtcmVsb2NhdGVkIiwicGx1Z2lucyI6eyJjdXN0b21Db21zY29yZVBsdWdpbiI6eyJwdWJsaXNoZXJTZWNyZXQiOiJ1V25pZ3l4T05ZTEtRYWxrNGlPS29hTHEzcTVoYndoUCIsImMzIjoiRk9YIDYgTmV3cyIsImM2IjoiRlRTIiwiYzQiOm51bGwsInNldEdlbnJlTmFtZSI6Ik5ld3MiLCJhcHBOYW1lIjoiRk9YNiBNaWx3YXVrZWUgTmV3cyBBcHAiLCJzY3JpcHQiOiJodHRwczovL3N0YXRpYy5mb3h0di5jb20vc3RhdGljL29yaW9uL3NjcmlwdHMvY29yZS91dGlscy9jb21zY29yZS9OYXRpdmVDb21zY29yZVBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2NvbXNjb3JlL2NvbXNjb3JlLmpzIiwiY2xpZW50SWQiOiI2MDQyOTAxIiwibnNfc3Rfc3QiOiJXSVRJIiwidGl0bGUiOiJNUFMgbGVhZCBleHBvc3VyZTogV2VzdHNpZGUgQWNhZGVteSBzdHVkZW50cywgdGVhY2hlcnMgcmVsb2NhdGVkIiwibnNfc3RfY2kiOiIxNjM1NjI1In0sImRmcCI6eyJjbGllbnRTaWRlIjp7ImFkVGFnVXJsIjoiaHR0cHM6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Fkcz9pdT0vNjM3OTA1NjQvd2l0aV9mb3g2JmRlc2NyaXB0aW9uX3VybD1bcGxhY2Vob2xkZXJdJmVudj12cCZpbXBsPXMmY29ycmVsYXRvcj0mdGZjZD0wJm5wYT0wJmdkZnBfcmVxPTEmb3V0cHV0PXZhc3Qmc3o9MTAwMXgxMDAxJnVudmlld2VkX3Bvc2l0aW9uX3N0YXJ0PTEmY21zaWQ9MjU0MTA0MCZ2aWQ9MTYzNTYyNSIsImtleVZhbHVlcyI6eyJzdHlwZSI6WyJuZXdzIl0sInB0eXBlIjoidmlkZW8tY2xpcCIsImMiOlsibmV3cyJdLCJkIjoid2ViIiwidXNfcHJpdmFjeSI6bnVsbH19fSwibmF0aXZlSGVhcnRiZWF0UGx1Z2luIjp7InNjcmlwdCI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2Fkb2JlL0N1c3RvbUhlYXJ0YmVhdFBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vYXNzZXRzLmFkb2JlZHRtLmNvbS8wZjZiZjkwNGI2MDkvNmRkYWI1YzE3NGU3L2xhdW5jaC1lODA3MWEwNzE5YzEubWluLmpzIiwiYWRkaXRpb25hbFBhZ2VNZXRhIjp7ImZpeFZlcnNpb24iOiI4LjkuMCJ9LCJwbGF5ZXJVbmlxdWVJZCI6InBsYXllci02MzFjNWEwMS05YTkzLTRiMTEtOTQ3YS1kMzVmYTA2Njg3YzIifX0sImh0bWw1Ijp0cnVlLCJmb3JtYXQiOiJtM3U4IiwidG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMmFXUWlPaUl4TmpNMU5qSTFJaXdpYVhOeklqb2lOMkkwVjBwc016VjZZVWhTZDFkNmFHdFZaWGRYV2twcFJETktUMjFCYWtjaUxDSmxlSEFpT2pFM05EZ3dNemd3T1Rjc0ltbGhkQ0k2TVRjME9EQXpORFE1TjMwLksyTVR6OV8xNW5vSmxGeEtMY2VlWWo3NllGU2tqa0U5d1dJaHRfc2laa00ifQ%253D%253D"></iframe>
+                            <iframe loading="lazy" scrolling="no" frameborder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen allow="autoplay; fullscreen" src="https://w3.mp.lura.live/player/3.12.16/v3/anvload.html?key=eyJtIjoiRVBGT1giLCJ2IjoiMTYzNTYyNSIsInRyYWNrVGltZVBlcmlvZCI6MSwid2lkdGgiOiIxMDAlIiwiYW52YWNrIjoiN2I0V0psMzV6YUhSd1d6aGtVZXdXWkppRDNKT21BakciLCJzaGFyZUxpbmsiOiJodHRwczovL3d3dy5mb3g2bm93LmNvbS9uZXdzL21wcy1sZWFkLWV4cG9zdXJlLXdlc3RzaWRlLWFjYWRlbXktc3R1ZGVudHMtdGVhY2hlcnMtcmVsb2NhdGVkIiwicGx1Z2lucyI6eyJjdXN0b21Db21zY29yZVBsdWdpbiI6eyJwdWJsaXNoZXJTZWNyZXQiOiJ1V25pZ3l4T05ZTEtRYWxrNGlPS29hTHEzcTVoYndoUCIsImMzIjoiRk9YIDYgTmV3cyIsImM2IjoiRlRTIiwiYzQiOm51bGwsInNldEdlbnJlTmFtZSI6Ik5ld3MiLCJhcHBOYW1lIjoiRk9YNiBNaWx3YXVrZWUgTmV3cyBBcHAiLCJzY3JpcHQiOiJodHRwczovL3N0YXRpYy5mb3h0di5jb20vc3RhdGljL29yaW9uL3NjcmlwdHMvY29yZS91dGlscy9jb21zY29yZS9OYXRpdmVDb21zY29yZVBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2NvbXNjb3JlL2NvbXNjb3JlLmpzIiwiY2xpZW50SWQiOiI2MDQyOTAxIiwibnNfc3Rfc3QiOiJXSVRJIiwidGl0bGUiOiJNUFMgbGVhZCBleHBvc3VyZTogV2VzdHNpZGUgQWNhZGVteSBzdHVkZW50cywgdGVhY2hlcnMgcmVsb2NhdGVkIiwibnNfc3RfY2kiOiIxNjM1NjI1In0sImRmcCI6eyJjbGllbnRTaWRlIjp7ImFkVGFnVXJsIjoiaHR0cHM6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Fkcz9pdT0vNjM3OTA1NjQvd2l0aV9mb3g2JmRlc2NyaXB0aW9uX3VybD1bcGxhY2Vob2xkZXJdJmVudj12cCZpbXBsPXMmY29ycmVsYXRvcj0mdGZjZD0wJm5wYT0wJmdkZnBfcmVxPTEmb3V0cHV0PXZhc3Qmc3o9MTAwMXgxMDAxJnVudmlld2VkX3Bvc2l0aW9uX3N0YXJ0PTEmY21zaWQ9MjU0MTA0MCZ2aWQ9MTYzNTYyNSIsImtleVZhbHVlcyI6eyJzdHlwZSI6WyJuZXdzIl0sInB0eXBlIjoidmlkZW8tY2xpcCIsImMiOlsibmV3cyJdLCJkIjoid2ViIiwidXNfcHJpdmFjeSI6bnVsbH19fSwibmF0aXZlSGVhcnRiZWF0UGx1Z2luIjp7InNjcmlwdCI6Imh0dHBzOi8vc3RhdGljLmZveHR2LmNvbS9zdGF0aWMvb3Jpb24vc2NyaXB0cy9jb3JlL3V0aWxzL2Fkb2JlL0N1c3RvbUhlYXJ0YmVhdFBsdWdpbi5qcyIsInNkayI6Imh0dHBzOi8vYXNzZXRzLmFkb2JlZHRtLmNvbS8wZjZiZjkwNGI2MDkvNmRkYWI1YzE3NGU3L2xhdW5jaC1lODA3MWEwNzE5YzEubWluLmpzIiwiYWRkaXRpb25hbFBhZ2VNZXRhIjp7ImZpeFZlcnNpb24iOiI4LjkuMCJ9LCJwbGF5ZXJVbmlxdWVJZCI6InBsYXllci02MzFjNWEwMS05YTkzLTRiMTEtOTQ3YS1kMzVmYTA2Njg3YzIifX0sImh0bWw1Ijp0cnVlLCJmb3JtYXQiOiJtM3U4IiwidG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMmFXUWlPaUl4TmpNMU5qSTFJaXdpYVhOeklqb2lOMkkwVjBwc016VjZZVWhTZDFkNmFHdFZaWGRYV2twcFJETktUMjFCYWtjaUxDSmxlSEFpT2pFM05EZ3dNemd3T1Rjc0ltbGhkQ0k2TVRjME9EQXpORFE1TjMwLksyTVR6OV8xNW5vSmxGeEtMY2VlWWo3NllGU2tqa0U5d1dJaHRfc2laa00ifQ%253D%253D"></iframe>
                         </div>
-                        <div class="gallery-caption-container">
+                        <figcaption class="gallery-caption-container">
                             <p class="gallery-caption">MPS lead exposure; Westside Academy students, teachers relocated</p>
                             <span class="gallery-credit">Source: FOX6NOW</span>
-                        </div>
-                    </div>
+                        </figcaption>
+                    </figure>
                 </div>
                 <div class="mt-8 text-left max-w-3xl mx-auto">
-                    <h3 class="text-xl font-bold text-[#bfa74a] mb-4">Additional Documents & Links</h3>
+                    <h3 class="text-xl font-bold text-[var(--color-primary-gold)] mb-4">Additional Documents & Links</h3>
                     <ul class="list-disc list-inside text-gray-300 text-sm">
                         <li><a href="https://city.milwaukee.gov/ImageLibrary/MKE-Health1/HEH-Website-2024/MPS-Lead-Documents/4.3/Progress-Letter-to-MPS-4.3.2025.pdf" target="_blank" class="underline hover:text-yellow-300">Progress Letter to MPS (April 3, 2025)</a></li>
                         <li><a href="https://mps.milwaukee.k12.wi.us/MPS-Public/CSA/FMS/Resources/MPS-Lead-Report/DHS-non-compliance-order-03-19-2025.pdf" target="_blank" class="underline hover:text-yellow-300">DHS Non-Compliance Order (March 19, 2025)</a></li>
@@ -310,24 +385,51 @@
             </div>
         </section>
 
-        <section id="crisis" class="py-12 bg-[#232323] rounded-lg shadow-lg scroll-mt-16">
+        <section id="crisis" class="py-12 bg-[var(--color-background-medium)] rounded-lg shadow-lg scroll-mt-16">
             <div class="max-w-4xl mx-auto px-4">
-                <h2 class="text-2xl font-bold text-[#bfa74a] mb-8 text-center">Timeline of a Predictable Disaster</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-primary-gold)] mb-8 text-center">Timeline of a Predictable Disaster</h2>
                  <div class="quote-box-paper my-6 mx-auto max-w-2xl">
                     <p>“The ‘poisoned schoolhouse’ is not an isolated aberration; it is a recurring node in the architecture of anti-Black governance. The violence is slow, measured in micrograms and lost IQ points... This is death by design—by paperwork, by delay, and by the persistent state logic that Black children’s lives are negotiable.”</p>
                     <footer>— Ebony Rose, "Necropolitical Waters"</footer>
                 </div>
                 <div class="quote-box-paper my-6 mx-auto max-w-2xl">
                     <p>“Milwaukee Public Schools and the City of Milwaukee Health Department have partnered to launch a lead action plan. This plan prioritizes transparency, student health, and systems improvement. The expectation by all parties is that the MPS Lead Action Plan has living documents.”</p>
-                    <footer class="text-right mt-2 font-style-normal"><a href="https://mps.milwaukee.k12.wi.us/en/District/About-MPS/Departments/Office-of-Operations/Facilities--Maintenance-Services/MPS-Lead-Report/Lead-Action-Plan.htm" target="_blank" class="underline text-[#bfa74a] hover:text-yellow-300">View the MPS Lead Action Plan</a></footer>
+                    <footer class="text-right mt-2 font-style-normal"><a href="https://mps.milwaukee.k12.wi.us/en/District/About-MPS/Departments/Office-of-Operations/Facilities--Maintenance-Services/MPS-Lead-Report/Lead-Action-Plan.htm" target="_blank" class="underline text-[var(--color-primary-gold)] hover:text-yellow-300">View the MPS Lead Action Plan</a></footer>
                 </div>
+
+                <!-- Integrated Accountability Summary -->
+                <div class="my-10 p-6 bg-[var(--color-background-light)] rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-[var(--color-primary-gold)] mb-4 text-center">Key Responses and Accountability Measures (Summary)</h3>
+                    <p class="text-gray-300 mb-3 leading-relaxed">The unfolding crisis prompted a series of actions and highlighted areas of responsibility across various levels:</p>
+                    <ul class="list-disc list-inside text-gray-300 text-sm space-y-2">
+                        <li><strong>Milwaukee Public Schools (MPS):</strong> Faced intense scrutiny, leading to the departure of its Senior Director of Facilities and Maintenance (Sean Kane, April 2025). MPS released a "Lead Action Plan" (April 28, 2025), initiated school closures for remediation, and began exploring legal action against lead paint manufacturers.</li>
+                        <li><strong>Milwaukee Health Department (MHD):</strong> Conducted initial school risk assessments, issued public health warnings, provided free lead testing clinics for students, and maintained a public dashboard of investigation statuses.</li>
+                        <li><strong>State of Wisconsin (DHS & Governor):</strong> The Department of Health Services (DHS) issued a noncompliance order to MPS for unsafe work practices (March 19, 2025). Governor Evers proposed over $300 million for statewide lead abatement in the 2025-27 budget.</li>
+                        <li><strong>Federal Government (Trump Administration):</strong> In a critical policy shift, the CDC's dedicated lead exposure prevention team was disbanded (April 1, 2025), and Milwaukee's request for on-site CDC expertise was subsequently denied due to these staff cuts. No direct federal emergency funding or EPA intervention for the MPS crisis was reported.</li>
+                    </ul>
+                    <p class="text-xs text-gray-400 mt-3">Further details on accountability are woven throughout the original research paper.</p>
+                </div>
+
                 <div class="relative">
-                    <div id="timeline-container"></div>
+                    <div id="timeline-container">
+                        <!-- Timeline items will be populated here by JavaScript -->
+                    </div>
                 </div>
-                <div class="mt-12 text-center chart-container h-72 md:h-96">
-                     <h3 class="text-xl font-semibold text-[#bfa74a] mb-4">Lead Level Severity (Conceptual)</h3>
-                     <canvas id="leadLevelChart"></canvas>
-                     <p class="text-xs text-gray-400 mt-2">Reported levels up to 170x safety threshold.</p>
+                <div class="mt-12 text-center chart-container">
+                     <h3 class="text-xl font-semibold text-[var(--color-primary-gold)] mb-2">Lead Level Severity (Conceptual)</h3>
+                     <div class="h-72 md:h-96"><canvas id="leadLevelChart"></canvas></div>
+                     <p class="text-xs text-gray-400 mt-1">Reported levels up to 170x safety threshold.</p>
+                     <button id="chart-explainer-button" aria-expanded="false" class="mt-3 text-sm text-[var(--color-primary-gold)] hover:text-yellow-300 underline focus:outline-none">What do these levels mean?</button>
+                     <div id="chart-explainer-content" class="chart-explainer text-left text-sm text-gray-300">
+                         <p class="mb-2">Lead is highly toxic, especially to children under 6. Even low-level exposure can cause irreversible harm to the developing brain and nervous system.</p>
+                         <ul class="list-disc list-inside space-y-1 mb-2">
+                             <li><strong>Cognitive Impairment:</strong> Significant reduction in IQ, poor school performance.</li>
+                             <li><strong>Developmental Delays:</strong> Late milestones in speech, language, and attention.</li>
+                             <li><strong>Learning & Memory Problems:</strong> Difficulty concentrating, processing information.</li>
+                             <li><strong>Behavioral Issues:</strong> Impulsivity, aggression, hyperactivity.</li>
+                         </ul>
+                         <p>Levels like "170x the safety threshold" indicate a severe and immediate hazard, requiring urgent action to prevent further exposure. There is no safe level of lead in a child's blood. <span class="text-xs block mt-1">(Source: CDC, "Health and Developmental Consequences of Lead Exposure in Children" section of this report)</span></p>
+                     </div>
                 </div>
                  <div class="quote-box-paper mt-10 mx-auto max-w-2xl">
                     <p>“The lead that invaded the bodies of Milwaukee’s children was more than a heavy metal: it was an instrument of structural violence... For Black children, already burdened by the cumulative effects of anti-Blackness, this assault represents a profound intensification of vulnerability and harm.”</p>
@@ -338,8 +440,8 @@
 
         <section id="ontology" class="ontology-section scroll-mt-16">
             <div class="max-w-2xl mx-auto px-4">
-                 <h2 class="text-3xl font-black text-[#bfa74a] mb-8 text-center">Black Death & Ontological Violence</h2>
-                <div class="quote-box-paper mx-auto max-w-xl mb-8 text-center" style="border-color: #bfa74a; background: #1a1a1a;">
+                 <h2 class="text-3xl font-black text-[var(--color-primary-gold)] mb-8 text-center">Black Death & Ontological Violence</h2>
+                <div class="quote-box-paper mx-auto max-w-xl mb-8 text-center" style="border-color: var(--color-primary-gold); background: #1a1a1a;">
                      <p class="text-lg leading-relaxed">“Viewing the Milwaukee lead crisis through this Wynterian framework, the situation ceases to be a simple ‘environmental issue’ or even a tragic racial injustice... Instead, it becomes a material manifestation of the ‘coloniality of being’—a direct result of a world order where Black children are systematically excluded from the privileged status of ‘Man’.”</p>
                      <footer class="mt-2">— Ebony Rose, "Necropolitical Waters"</footer>
                 </div>
@@ -348,7 +450,7 @@
                 </div>
                 <div class="ontology-author">— <a class="underline hover:text-yellow-300" href="https://wisconsinexaminer.com/2025/04/14/milwaukee-jolted-by-cdc-lead-prevention-team-cuts-as-mps-schools-remain-closed/" target="_blank" rel="noopener noreferrer">Wisconsin Examiner, April 2025</a></div>
                 
-                <div class="quote-box-paper mx-auto max-w-xl my-8 text-center" style="border-color: #bfa74a; background: #1a1a1a;">
+                <div class="quote-box-paper mx-auto max-w-xl my-8 text-center" style="border-color: var(--color-primary-gold); background: #1a1a1a;">
                      <p class="text-lg leading-relaxed">“The lead in the water, the dust on the desks, the slowness of response: these are all symptoms of a deeper epistemic poison—the persistent refusal to recognize and honor the humanity of Black children.”</p>
                      <footer class="mt-2">— Ebony Rose, "Necropolitical Waters"</footer>
                 </div>
@@ -362,7 +464,7 @@
                     “Black life is lived in the space between death and dying. To be Black is to be rendered available to premature death, to be abandoned in advance.”<br>
                 </div>
                 <div class="ontology-author">— Christina Sharpe, <em>In the Wake</em></div>
-                 <div class="quote-box-paper mx-auto max-w-xl mt-12 text-center" style="border-color: #bfa74a; background: #1a1a1a;">
+                 <div class="quote-box-paper mx-auto max-w-xl mt-12 text-center" style="border-color: var(--color-primary-gold); background: #1a1a1a;">
                      <p class="text-lg leading-relaxed">“A school system that exposes Black children to toxic harm, while issuing proclamations of care, teaches a curriculum of disposability and abandonment. This is the hidden lesson: that Black futures are perpetually at risk, always less urgent, always less protected.”</p>
                      <footer class="mt-2">— Ebony Rose, "Necropolitical Waters"</footer>
                 </div>
@@ -371,7 +473,7 @@
 
         <section id="roots" class="py-10 scroll-mt-16">
             <div class="max-w-4xl mx-auto px-4">
-                <h2 class="text-2xl font-bold text-[#bfa74a] mb-8 text-center">Key Theoretical Concepts</h2>
+                <h2 class="text-2xl font-bold text-[var(--color-primary-gold)] mb-8 text-center">Key Theoretical Concepts</h2>
                  <div class="quote-box-paper mb-8 mx-auto max-w-2xl">
                     <p>“Anti-blackness provides the ideological justification, the silent permission, for the necropolitical abandonment of these educational spaces. It is the logic that allows a society to look away, to defer action, to accept the poisoning of Black children as an unfortunate but ultimately tolerable outcome.”</p>
                     <footer>— Ebony Rose, "Necropolitical Waters"</footer>
@@ -382,7 +484,7 @@
 
         <section id="analysis" class="analysis-section scroll-mt-16">
             <div class="max-w-3xl mx-auto">
-                <h2 class="text-3xl font-black text-[#bfa74a] mb-6 text-center">Deeper Analysis: Towards a New Humanitas</h2>
+                <h2 class="text-3xl font-black text-[var(--color-primary-gold)] mb-6 text-center">Deeper Analysis: Towards a New Humanitas</h2>
                 <p class="text-lg text-gray-300 mb-6 leading-relaxed text-center">
                     The Milwaukee crisis is more than a policy failure; it reflects a fundamental devaluation of Black humanity. This section delves into Sylvia Wynter's critique of the dominant Western concept of "Man" and its role in such crises, and presents the report's call for a radical reimagining of public responsibility and human value.
                 </p>
@@ -409,24 +511,42 @@
             </div>
         </section>
         
+        <section id="news" class="py-10 bg-[var(--color-background-light)] rounded-lg shadow-lg scroll-mt-16"> 
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-2xl font-bold text-[var(--color-primary-gold)] mb-6 text-center">Further Reading & News</h2>
+                <div id="news-feed-container" class="space-y-4 text-sm">
+                    <p id="news-loading" class="text-center text-gray-400">This section highlights key reports and news. For ongoing updates, please consult local Milwaukee news outlets. The "Additional Documents & Links" in the Visual Testimony section also contains valuable resources.</p>
+                    <!-- Example of how you might list some key static links if API is not used -->
+                    <div class="bg-[var(--color-background-medium)] p-4 rounded shadow-md">
+                        <h4 class="font-semibold text-[var(--color-primary-gold)] mb-1"><a href="https://www.wuwm.com/education/2025-04-29/mps-says-it-will-clean-up-lead-paint-in-100-schools-by-the-end-of-the-year-how" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-300">MPS says it will clean up lead paint in 100 schools (WUWM, April 2025)</a></h4>
+                        <p class="text-xs text-gray-400 mb-2">Details on MPS's commitment to address lead paint hazards across numerous schools.</p>
+                    </div>
+                     <div class="bg-[var(--color-background-medium)] p-4 rounded shadow-md">
+                        <h4 class="font-semibold text-[var(--color-primary-gold)] mb-1"><a href="https://www.vox.com/public-health/413352/donald-trump-rfk-milwaukee-schools-lead-poisoning" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-300">This city’s lead-poisoning crisis should be a national scandal (Vox, May 2025)</a></h4>
+                        <p class="text-xs text-gray-400 mb-2">Discusses the federal response and the implications of CDC team cuts.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="about" class="py-12 text-center text-sm text-gray-400 max-w-2xl mx-auto scroll-mt-16">
-            <h3 class="text-[#bfa74a] font-semibold text-lg mb-3">About This Project</h3>
+            <h3 class="text-[var(--color-primary-gold)] font-semibold text-lg mb-3">About This Project</h3>
             <p class="leading-relaxed">
               This interactive report is based on Ebony Rose’s 2025 research paper 
               <em>Necropolitical Waters: Anti-Blackness, State Abandonment, and the Poisoning of Black Futures in Milwaukee's Schools</em>. 
               It combines data, theory, and design to reveal 
               the human cost of bureaucratic abandonment in Milwaukee Public Schools.
             </p>
-            <a href="/full-paper.pdf" class="underline text-[#bfa74a] hover:text-yellow-300 mt-4 inline-block">
+            <a href="full-paper.pdf" class="underline text-[var(--color-primary-gold)] hover:text-yellow-300 mt-4 inline-block"> <!-- Assuming full-paper.pdf is in the root -->
               Download Full Paper (PDF)
             </a>
         </section>
 
-        <section id="contact" class="py-12 text-center text-sm text-gray-400 max-w-2xl mx-auto scroll-mt-16"> <!-- NEW CONTACT SECTION -->
-            <h3 class="text-[#bfa74a] font-semibold text-lg mb-3">Contact the Author</h3>
+        <section id="contact" class="py-12 text-center text-sm text-gray-400 max-w-2xl mx-auto scroll-mt-16">
+            <h3 class="text-[var(--color-primary-gold)] font-semibold text-lg mb-3">Contact the Author</h3>
             <p class="leading-relaxed">
               For questions, feedback, or inquiries regarding this research, please contact Ebony Rose at:
-              <a href="mailto:necropoliticalwaters@gmail.com" class="underline text-[#bfa74a] hover:text-yellow-300">necropoliticalwaters@gmail.com</a>
+              <a href="mailto:necropoliticalwaters@gmail.com" class="underline text-[var(--color-primary-gold)] hover:text-yellow-300">necropoliticalwaters@gmail.com</a>
             </p>
         </section>
 
@@ -437,7 +557,7 @@
     </footer>
 
     <button id="backToTop" aria-label="Back to top"
-        class="fixed bottom-5 right-5 bg-[#bfa74a] text-black p-3 rounded-full shadow-md hover:bg-yellow-400 hidden transition-opacity duration-300 opacity-0">
+        class="fixed bottom-5 right-5 bg-[var(--color-primary-gold)] text-black p-3 rounded-full shadow-md hover:bg-yellow-400 hidden transition-opacity duration-300 opacity-0">
         ↑
     </button>
 
@@ -450,23 +570,28 @@
         const menuIconOpen = document.getElementById('menu-icon-open');
         const menuIconClose = document.getElementById('menu-icon-close');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            menuIconOpen.classList.toggle('hidden');
-            menuIconClose.classList.toggle('hidden');
-        });
+        if (mobileMenuButton && mobileMenu && menuIconOpen && menuIconClose) {
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenu.classList.toggle('hidden');
+                menuIconOpen.classList.toggle('hidden', !isExpanded);
+                menuIconClose.classList.toggle('hidden', isExpanded);
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+            });
+        }
         mobileNavLinks.forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
                 menuIconOpen.classList.remove('hidden');
                 menuIconClose.classList.add('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
             });
         });
 
         // Active nav state & smooth scroll
         const navLinks = document.querySelectorAll('header nav a[href^="#"]');
         const sections = document.querySelectorAll('main section[id]');
-        const headerHeight = document.querySelector('header').offsetHeight;
+        const header = document.querySelector('header');
+        const headerHeight = header ? header.offsetHeight : 0;
 
 
         function changeNavActiveState(targetId) {
@@ -491,25 +616,35 @@
                         top: offsetPosition,
                         behavior: "smooth"
                     });
+                     // If mobile menu is open, close it
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        menuIconOpen.classList.remove('hidden');
+                        menuIconClose.classList.add('hidden');
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    }
                 }
             });
         });
         
-        const observerOptions = { root: null, rootMargin: `-${headerHeight}px 0px -${window.innerHeight - headerHeight - 150}px 0px`, threshold: 0.01 }; 
-        const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    changeNavActiveState(entry.target.id);
-                }
-            });
-        }, observerOptions);
-        sections.forEach(section => sectionObserver.observe(section));
+        if (sections.length > 0) {
+            const observerOptions = { root: null, rootMargin: `-${headerHeight}px 0px -${window.innerHeight - headerHeight - 150}px 0px`, threshold: 0.01 }; 
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        changeNavActiveState(entry.target.id);
+                    }
+                });
+            }, observerOptions);
+            sections.forEach(section => sectionObserver.observe(section));
+        }
+
 
         window.addEventListener('load', () => {
             let initialSection = '';
             if (window.location.hash && document.getElementById(window.location.hash.substring(1))) {
                 initialSection = window.location.hash.substring(1);
-            } else if (sections.length > 0) {
+            } else if (sections.length > 0 && sections[0]) { // Check if sections[0] exists
                 let found = false;
                 for (let section of sections) {
                     const rect = section.getBoundingClientRect();
@@ -540,49 +675,85 @@
             }
         });
 
-        // Timeline Data
+        // Timeline Data & Click-to-Expand Functionality
         const timelineData = [
+             {
+                date: "Jan 13, 2025",
+                title: "First lead-poisoned student (Golda Meir)",
+                description: "MHD investigation finds extensive lead paint hazards. Dust levels up to 170x safety threshold.",
+                details: "Parents at Golda Meir School’s Lower Campus notified of a third-grade student with elevated blood lead levels. City health officials determined exposure occurred at school. An MHD risk assessment confirmed deteriorating lead-based paint and lead-laden dust throughout, with dust samples up to 170x state safety thresholds. Chipping paint was found on all floors, and some water samples showed elevated lead. (Source: Lead Contamination Crisis in MPS Document)"
+            },
             {
-                date: "Jan 2025",
-                title: "First child poisoned",
-                description: "‘A child’s blood test confirmed elevated lead levels, traced back to a school. The district’s response: slow, opaque, bureaucratic.’ — <a href='https://www.jsonline.com/story/news/education/2025/05/22/an-mps-school-built-in-1893-cleared-of-lead-hazards-district-says/83773278007/' class='underline text-[#bfa74a] hover:text-yellow-300' target='_blank' rel='noopener noreferrer'>Milwaukee Journal Sentinel</a>"
+                date: "Late Jan – Feb 2025",
+                title: "Further cases & warnings",
+                description: "Lead dust at Kagel (34x limit), Maryland Ave Montessori, Trowbridge. MHD issues public warnings.",
+                details: "Kagel Elementary found with lead paint dust (samples up to 34x safety limit). Investigations launched at Maryland Avenue Montessori and Trowbridge School after two more students confirmed with lead poisoning. By mid-February, four MPS schools (Golda Meir, Kagel, Maryland Avenue, Trowbridge) were linked to child lead poisoning. MHD warned of 'immediate and ongoing risk'. (Source: Lead Contamination Crisis in MPS Document)"
             },
             {
                 date: "Mar 2025",
-                title: "‘Immediate and ongoing risk’",
-                description: "‘The three schools — Starms Early Childhood, Fernwood Montessori and LaFollette — pose an immediate and ongoing risk due to dangerous lead hazards.’ — <a href='https://www.wpr.org/news/milwaukee-health-department-mps-schools-lead-hazards-starms-fernwood-lafollette' class='underline text-[#bfa74a] hover:text-yellow-300' target='_blank' rel='noopener noreferrer'>WPR</a>"
+                title: "School Closures Begin",
+                description: "Starms, Fernwood, LaFollette closed (Mar 17). Trowbridge temporarily closed/cleaned.",
+                details: "On March 17, MPS temporarily closed Starms Early Childhood Education Center, Fernwood Montessori School, and LaFollette Elementary School for comprehensive lead testing and cleanup. Trowbridge School was also temporarily closed and cleaned after MPS crews violated safety rules during lead paint work. DHS issued a noncompliance order to MPS on March 19. (Source: Lead Contamination Crisis in MPS Document)"
             },
             {
                 date: "Apr 2025",
-                title: "No federal help",
-                description: "‘The CDC’s lead prevention team was eliminated... leaving Milwaukee without federal support as the crisis escalated.’ — <a href='https://wisconsinexaminer.com/2025/04/14/milwaukee-jolted-by-cdc-lead-prevention-team-cuts-as-mps-schools-remain-closed/' class='underline text-[#bfa74a] hover:text-yellow-300' target='_blank' rel='noopener noreferrer'>Wisconsin Examiner</a>"
+                title: "Reopenings, Action Plan, More Closures",
+                description: "Fernwood reopens (Apr 25). MPS Lead Action Plan unveiled (Apr 28). Brown St. & Westside Academy closures announced for May.",
+                details: "Fernwood Montessori reopened on April 25 after passing clearance tests. Starms and LaFollette remained closed. On April 28, MPS released its 'Lead Action Plan' and announced upcoming May closures for Brown Street Academy and Westside Academy. Senior Director of Facilities Sean Kane departed MPS. The Trump administration withdrew federal CDC support for Milwaukee's lead crisis response due to budget cuts and restructuring. (Source: Lead Contamination Crisis in MPS Document, Holmes, 2025)"
             },
             {
-                date: "Apr–May 2025",
-                title: "School closures, displacement",
-                description: "‘Milwaukee Public Schools remain closed as costs for cleaning up lead run high. Black families are left with instability and unanswered questions.’ — <a href='https://pbswisconsin.org/news-item/lead-levels-and-cleanup-costs-are-high-in-milwaukee-schools/' class='underline text-[#bfa74a] hover:text-yellow-300' target='_blank' rel='noopener noreferrer'>PBS Wisconsin</a>"
-            },
-            {
-                date: "Summer 2025",
-                title: "Crisis fades, harm endures",
-                description: "‘For children, there is no closure. The risk of long-term brain and nervous system damage remains.’ — <a href='https://www.cdc.gov/lead-prevention/risk-factors/children.html' class='underline text-[#bfa74a] hover:text-yellow-300' target='_blank' rel='noopener noreferrer'>CDC</a>"
+                date: "May 2025",
+                title: "Additional Closures & Ongoing Work",
+                description: "Brown Street & Westside Academies close. At least five schools closed/remediated by end of school year.",
+                details: "Brown Street Academy (May 5) and Westside Academy (May 12) closed for lead hazard cleanup. Students were relocated. By the end of the school year, at least five MPS schools (Starms, Fernwood, LaFollette, Brown Street, Westside) had been or were closed for lead abatement, with several others undergoing major remediation and reopening. MPS committed to visually inspecting 106 older elementary schools by the next school year. (Source: Lead Contamination Crisis in MPS Document)"
             }
         ];
         const timelineContainer = document.getElementById('timeline-container');
         if (timelineContainer) {
             timelineData.forEach((item) => {
-                const div = document.createElement('div');
-                div.className = "timeline-item";
-                div.innerHTML = `
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-line"></div>
-                    <div>
-                        <span class="text-[#bfa74a] font-semibold">${item.date}</span>
-                        <h4 class="ml-2 inline font-bold text-[#ececec]">${item.title}</h4>
-                        <div class="mt-2 text-gray-300 text-sm leading-relaxed">${item.description}</div>
-                    </div>
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "timeline-item"; 
+                itemDiv.setAttribute('tabindex', '0'); 
+                itemDiv.setAttribute('role', 'button');
+                itemDiv.setAttribute('aria-expanded', 'false');
+                itemDiv.setAttribute('aria-label', `Timeline event: ${item.title}. Click or press enter to expand for details.`);
+
+
+                const markerDiv = document.createElement('div');
+                markerDiv.className = "timeline-marker";
+                
+                const lineDiv = document.createElement('div');
+                lineDiv.className = "timeline-line";
+
+                const contentDiv = document.createElement('div');
+                contentDiv.innerHTML = `
+                    <time datetime="${item.date.replace(/(\w+)\s(\d+),\s(\d{4})/, '$3-$1-$2')}"><span class="text-[var(--color-primary-gold)] font-semibold">${item.date}</span></time>
+                    <h4 class="ml-2 inline font-bold text-[var(--color-text-main)]">${item.title}</h4>
+                    <div class="mt-1 text-gray-300 text-sm leading-relaxed">${item.description}</div>
                 `;
-                timelineContainer.appendChild(div);
+                
+                const detailsDiv = document.createElement('div');
+                detailsDiv.className = "timeline-item-details";
+                detailsDiv.innerHTML = `<p>${item.details || "More details will be available soon."}</p>`;
+
+                itemDiv.appendChild(markerDiv);
+                itemDiv.appendChild(lineDiv);
+                itemDiv.appendChild(contentDiv);
+                itemDiv.appendChild(detailsDiv);
+                
+                timelineContainer.appendChild(itemDiv);
+
+                itemDiv.addEventListener('click', () => {
+                    itemDiv.classList.toggle('open');
+                    const isExpanded = itemDiv.classList.contains('open');
+                    itemDiv.setAttribute('aria-expanded', isExpanded.toString());
+                });
+                itemDiv.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        itemDiv.click();
+                    }
+                });
             });
         }
 
@@ -613,26 +784,45 @@
         if (conceptsGrid) {
             conceptsData.forEach(concept => {
                 const card = document.createElement('div');
-                card.className = 'concept-card p-6 shadow-md'; 
+                card.className = 'concept-card p-6 shadow-md';
+                card.setAttribute('tabindex', '0'); 
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-expanded', 'false');
+                card.setAttribute('aria-label', `Concept: ${concept.term}. Click or press enter to expand for application details.`);
+
+
                 card.innerHTML = `
-                    <h4 class="text-lg font-semibold text-[#bfa74a] mb-2">${concept.term}</h4>
+                    <h4 class="text-lg font-semibold text-[var(--color-primary-gold)] mb-2">${concept.term}</h4>
                     <p class="text-sm text-gray-200 mb-3 leading-relaxed">${concept.definition}</p>
-                    <button aria-label="Toggle concept card application section" class="text-sm font-semibold mt-3 focus:outline-none hover:text-yellow-300">Show Application</button>
-                    <div class="details text-gray-400 mt-3 pt-3 border-t border-gray-700">
-                        <p class="text-sm leading-relaxed"><strong class="text-[#a11919] font-semibold">Application to Milwaukee:</strong> ${concept.application}</p>
+                    <button aria-expanded="false" aria-label="Toggle application details for ${concept.term}" class="text-sm font-semibold mt-3 focus:outline-none hover:text-yellow-300">Show Application</button>
+                    <div class="details text-gray-400 mt-3 pt-3 border-t border-[var(--color-border-dark)]">
+                        <p class="text-sm leading-relaxed"><strong class="text-[var(--color-primary-red)] font-semibold">Application to Milwaukee:</strong> ${concept.application}</p>
                     </div>
                 `;
                 conceptsGrid.appendChild(card);
                 const button = card.querySelector('button');
+                
+                function toggleCard() {
+                    card.classList.toggle('open');
+                    const isExpanded = card.classList.contains('open');
+                    button.textContent = isExpanded ? 'Hide Application' : 'Show Application';
+                    button.setAttribute('aria-expanded', isExpanded.toString());
+                    card.setAttribute('aria-expanded', isExpanded.toString());
+                }
+
                 button.addEventListener('click', (e) => {
                     e.stopPropagation(); 
-                    card.classList.toggle('open');
-                    button.textContent = card.classList.contains('open') ? 'Hide Application' : 'Show Application';
+                    toggleCard();
                 });
                 card.addEventListener('click', (e) => {
-                    if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON' && !button.contains(e.target)) {
-                        card.classList.toggle('open');
-                        button.textContent = card.classList.contains('open') ? 'Hide Application' : 'Show Application';
+                    if (e.target !== button && !button.contains(e.target)) { // Allow clicks on links within details if any
+                        toggleCard();
+                    }
+                });
+                 card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleCard();
                     }
                 });
             });
@@ -651,52 +841,81 @@
             glossaryData.forEach(item => {
                 const div = document.createElement('div');
                 div.className = "bg-[#1c1c1c] p-4 rounded shadow-md"; 
-                div.innerHTML = `<h4 class="font-semibold text-[#bfa74a]">${item.term}</h4><p class="text-sm text-gray-300 leading-relaxed">${item.definition}</p>`;
+                div.innerHTML = `<h4 class="font-semibold text-[var(--color-primary-gold)]">${item.term}</h4><p class="text-sm text-gray-300 leading-relaxed">${item.definition}</p>`;
                 glossaryContainer.appendChild(div);
             });
         }
 
-        // Chart.js: Lead Level Visualization
+        // Chart.js: Lead Level Visualization & Explainer Button
         const ctxLeadLevel = document.getElementById('leadLevelChart');
+        const chartExplainerButton = document.getElementById('chart-explainer-button');
+        const chartExplainerContent = document.getElementById('chart-explainer-content');
+
         if (ctxLeadLevel) {
-            Chart.defaults.color = '#a3a3a3'; 
-            new Chart(ctxLeadLevel, {
-                type: 'bar',
-                data: {
-                    labels: ['Safety Threshold', 'MPS Levels (Up To)'],
-                    datasets: [{
-                        data: [1, 170], 
-                        backgroundColor: ['#34d399', '#ef4444'], 
-                        borderColor: ['#10b981', '#dc2626'], 
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                    scales: { 
-                        x: { 
-                            beginAtZero: true, 
-                            title: { display: true, text: 'Relative Contamination', font: {size: 11, weight: '600'}, color: '#bfa74a'},
-                            ticks: { color: '#a3a3a3', font: {size: 10} },
-                            grid: { color: '#404040'}
-                        }, 
-                        y: { 
-                            ticks: { color: '#a3a3a3', font: {size: 11}},
-                            grid: { display: false }
-                        }
+            try {
+                Chart.defaults.color = '#a3a3a3'; 
+                new Chart(ctxLeadLevel, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Safety Threshold', 'MPS Levels (Up To)'],
+                        datasets: [{
+                            data: [1, 170], 
+                            backgroundColor: ['#34d399', 'var(--color-primary-red)'], 
+                            borderColor: ['#10b981', '#dc2626'], 
+                            borderWidth: 1
+                        }]
                     },
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#333', titleFont: {size: 14}, bodyFont: {size:12},
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label === 'Safety Threshold' ? 'Baseline Safety Level (Conceptual)' : `Up to ${context.parsed.x}x Safety Threshold`;
+                    options: {
+                        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                        scales: { 
+                            x: { 
+                                beginAtZero: true, 
+                                title: { display: true, text: 'Relative Contamination', font: {size: 11, weight: '600'}, color: 'var(--color-primary-gold)'},
+                                ticks: { color: '#a3a3a3', font: {size: 10} },
+                                grid: { color: 'var(--color-border-medium)'}
+                            }, 
+                            y: { 
+                                ticks: { color: '#a3a3a3', font: {size: 11}},
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#333', titleFont: {size: 14}, bodyFont: {size:12},
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.x !== null) {
+                                            if (context.label === 'Safety Threshold') {
+                                               return 'Baseline Safety Level (Conceptual). Lead is unsafe at any level for children.';
+                                            } else {
+                                               return `Reported contamination up to ${context.parsed.x}x the safety threshold.`;
+                                            }
+                                        }
+                                        return label;
+                                    }
                                 }
                             }
                         }
                     }
+                });
+            } catch (error) {
+                console.error("Chart.js initialization failed:", error);
+                if (ctxLeadLevel.parentElement) {
+                     ctxLeadLevel.parentElement.innerHTML = "<p class='text-center text-red-500'>Chart could not be loaded.</p>";
                 }
+            }
+        }
+        if (chartExplainerButton && chartExplainerContent) {
+            chartExplainerButton.addEventListener('click', () => {
+                chartExplainerContent.classList.toggle('open');
+                const isExpanded = chartExplainerContent.classList.contains('open');
+                chartExplainerButton.setAttribute('aria-expanded', isExpanded.toString());
+                chartExplainerButton.textContent = isExpanded ? 'Hide Explanation' : 'What do these levels mean?';
             });
         }
 
@@ -705,11 +924,14 @@
         if (backToTopButton) {
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 300) {
-                    backToTopButton.classList.remove('hidden');
+                    backToTopButton.classList.remove('hidden', 'opacity-0');
                     backToTopButton.classList.add('opacity-100');
                 } else {
-                    backToTopButton.classList.add('hidden');
-                    backToTopButton.classList.remove('opacity-100');
+                    backToTopButton.classList.add('opacity-0');
+                    // Wait for transition to finish before hiding, to prevent jump
+                    setTimeout(() => {
+                         if (window.scrollY <= 300) backToTopButton.classList.add('hidden');
+                    }, 300); // Match transition duration
                 }
             });
             backToTopButton.addEventListener('click', () => {
@@ -721,13 +943,15 @@
         const markerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-pulse-on-visible');
-                    markerObserver.unobserve(entry.target); 
+                    const marker = entry.target.querySelector('.timeline-marker');
+                    if (marker) {
+                        marker.classList.add('animate-pulse-on-visible');
+                    }
                 }
             });
         }, { threshold: 0.5 });
 
-        document.querySelectorAll('.timeline-marker').forEach(el => markerObserver.observe(el));
+        document.querySelectorAll('.timeline-item').forEach(el => markerObserver.observe(el));
     });
     </script>
 </body>
